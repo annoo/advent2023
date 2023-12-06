@@ -163,3 +163,8 @@ cython_debug/
 
 # Configuration
 config.yaml
+
+# inputs
+/day1/input1.txt
+/day2/input2.txt
+/day3/input3.txt
