@@ -1,7 +1,6 @@
 import pytest
 from solution5 import Map, decypher_map, read_range, solve_part1, solve_part2
 
-input_data = "input5.txt"
 
 @pytest.mark.parametrize(
     ["scrambled_part", "expected_source_range", "expected_destination_range"],
@@ -60,7 +59,7 @@ def test_map_returns_correct_mapping_for_number(source_number,
     "part, input_data, expected_output",
     [
         (1, "test_input5.txt", 35),
-        # (2, "test_input4.txt", 30),
+        (1, "input5.txt", 0),
     ],
 )
 def test_solve(part, input_data, expected_output):

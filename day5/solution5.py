@@ -38,6 +38,8 @@ class Map:
 
 
 def divide_input_parts(input_data) -> tuple[dict, list]:
+    # name with .removesuffix(" map") vs pre-built list
+    # work with iterators and takewhile
     maps = {
         name: []
         for name in [
@@ -75,6 +77,7 @@ def divide_input_parts(input_data) -> tuple[dict, list]:
 
 
 def read_range(range_: list) -> tuple[range, range]:
+    # cleanup
     source_range_start = range_[1]
     destination_range_start = range_[0]
     length = range_[2]
@@ -87,6 +90,7 @@ def read_range(range_: list) -> tuple[range, range]:
 
 
 def decypher_map(scrambled_map: list[list[int]]) -> Map:
+    # cleanup
     source_points = []
     destination_points = []
     for part in scrambled_map:
@@ -96,22 +100,18 @@ def decypher_map(scrambled_map: list[list[int]]) -> Map:
     return Map(source=source_points, destination=destination_points)
 
 
-
 def process_seed_through_maps(seed: int, maps: list[Map]) -> int:
     return reduce(lambda number, map: map.map_number_to_destination(number)
                                       or number,
                   maps,
                   seed)
 
+
 def solve_part1(input_data) -> int:
     maps, seeds = divide_input_parts(input_data)
     maps = [decypher_map(m) for m in maps.values()]
 
-    lowest: int = 0
-    for seed in seeds:
-        final_value = process_seed_through_maps(seed, maps)
-        lowest = max(lowest, final_value)
-    return lowest
+    return min([process_seed_through_maps(seed, maps) for seed in seeds])
 
 
 def solve_part2(input_data):
@@ -122,7 +122,7 @@ def generate_solution(puzzle):
     solution1 = solve_part1(puzzle)
     # solution2 = solve_part2(puzzle)
     print(f"\n\nsolution part 1 : {solution1}")
-    # print(f"\nsolution part 2 : {solution2}")
+    # print(f"\solution part 2 : {solution2}")
 
 
 if __name__ == "__main__":
