@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from functools import reduce
+from typing import Iterator
 
 puzzle_input = "input5.txt"
 
@@ -8,33 +9,22 @@ puzzle_input = "input5.txt"
 
 @dataclass
 class Map:
-    source: list[range]
-    destination: list[range]
+    mapping: dict[int, int]
 
-    def _find_source_range(self, number: int) -> int | None:
-        for i, rng in enumerate(self.source):
-            if number in rng:
-                return i
-        return None
+    def __init__(self, source: list[range], destination: list[range]) -> None:
+        self.mapping = self._build_mapping(source, destination)
 
-    def _find_index(self, which_range: int, number: int) -> int | None:
-        for j, value in enumerate(self.source[which_range]):
-            if number == value:
-                return j
-        return None
-
-    def _find_destination_value(self, which_range: int, index: int) -> int | None:
-        if which_range is not None and index is not None:
-            return self.destination[which_range][index]
-        return None
+    def _build_mapping(self, source: list[range], destination: list[range]) -> \
+    dict[int, int]:
+        mapping = {}
+        for src_range, destination_range in zip(source, destination):
+            for src_value, destination_value in zip(src_range,
+                                                    destination_range):
+                mapping[src_value] = destination_value
+        return mapping
 
     def map_number_to_destination(self, number: int) -> int:
-        which_range = self._find_source_range(number)
-        if which_range is not None:
-            index = self._find_index(which_range, number)
-            return self._find_destination_value(which_range, index)
-        else:
-            return number
+        return self.mapping.get(number, number) # else: return self
 
 
 def divide_input_parts(input_data) -> tuple[dict, list]:
@@ -76,17 +66,15 @@ def divide_input_parts(input_data) -> tuple[dict, list]:
     return maps, seeds
 
 
+def unpack_in_seed_ranges(seeds: list[int]) -> Iterator[range]:
+    for start_seed, length in zip(seeds[::2], seeds[1::2]):
+        yield range(start_seed, start_seed+length)
+
+
 def read_range(range_: list) -> tuple[range, range]:
-    # cleanup
-    source_range_start = range_[1]
-    destination_range_start = range_[0]
-    length = range_[2]
-    source_range_stop = source_range_start + length
-    destination_range_stop = destination_range_start + length
-    decyphered_source = range(source_range_start, source_range_stop)
-    decyphered_destination = range(destination_range_start,
-                                   destination_range_stop)
-    return decyphered_source, decyphered_destination
+    destination_range_start, source_range_start, length = range_
+    return (range(source_range_start, source_range_start + length),
+            range(destination_range_start, destination_range_start + length))
 
 
 def decypher_map(scrambled_map: list[list[int]]) -> Map:
@@ -97,7 +85,7 @@ def decypher_map(scrambled_map: list[list[int]]) -> Map:
         decyphered_source, decyphered_destination = read_range(part)
         source_points.append(decyphered_source)
         destination_points.append(decyphered_destination)
-    return Map(source=source_points, destination=destination_points)
+    return Map(source_points, destination_points)
 
 
 def process_seed_through_maps(seed: int, maps: list[Map]) -> int:
@@ -115,7 +103,13 @@ def solve_part1(input_data) -> int:
 
 
 def solve_part2(input_data):
-    pass
+    maps, seeds = divide_input_parts(input_data)
+    maps = [decypher_map(m) for m in maps.values()]
+    seed_ranges = unpack_in_seed_ranges(seeds)
+    processed_seeds = [process_seed_through_maps(seed, maps)
+                       for seed_range in seed_ranges
+                       for seed in seed_range]
+    return min(processed_seeds)
 
 
 def generate_solution(puzzle):
