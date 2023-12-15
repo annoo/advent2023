@@ -38,10 +38,12 @@ def test_transform_str_to_number_grid():
 
 
 @pytest.mark.parametrize("simple_line, expected_mirror", [
+    [np.array([[1, 1, 0, 0, 1, 1]]), 3],
     [np.array([[1, 0, 0, 1, 1]]), 2],
     [np.array([[2, 1, 0, 0, 1]]), 3],
     [np.array([[0, 0, 1]]), 1],
     [np.array([[0, 3, 4, 2]]), 0],  # representation of != columns
+    [np.array([[0, 1, 0, 1]]), 0]
 ])
 def test_detect_vertical_mirror_simple(simple_line, expected_mirror):
     assert detect_vertical_mirror(simple_line) == expected_mirror
@@ -63,10 +65,12 @@ def test_detect_vertical_mirror_grid2():
 
 
 @pytest.mark.parametrize("simple_column, expected_mirror", [
+    [np.array([[1], [1], [0], [0], [1], [1]]), 3],
     [np.array([[1], [0], [0], [1], [1]]), 2],
     [np.array([[2], [1], [0], [0], [1]]), 3],  # to avoid 2 mirrors
     [np.array([[0], [0], [1]]), 1],
-    [np.array([[0], [2], [1], [4]]), 0]
+    [np.array([[0], [2], [1], [4]]), 0],
+    [np.array([[0], [1], [0], [1]]), 0]
 ])
 def test_detect_horizontal_mirror_simple(simple_column, expected_mirror):
     assert detect_horizontal_mirror(simple_column) == expected_mirror

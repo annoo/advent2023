@@ -25,13 +25,15 @@ def detect_vertical_mirror(map: NDArray) -> int:
 
     for cut_off_line in range(n_of_cols, 1, -1):
         part_of_map = map[:, :cut_off_line]
-        if np.array_equal(part_of_map, np.fliplr(part_of_map)):
+        if (np.array_equal(part_of_map, np.fliplr(part_of_map))
+                and (part_of_map.shape[1] % 2 == 0)):
             return cut_off_line // 2
     # right side_compare
     # from big to small
     for cut_off_line in range(n_of_cols - 1):
         part_of_map = map[:, cut_off_line:]
-        if np.array_equal(part_of_map, np.fliplr(part_of_map)):
+        if (np.array_equal(part_of_map, np.fliplr(part_of_map))
+                and (part_of_map.shape[1] % 2 == 0)):
             return (n_of_cols // 2) + 1
 
     return 0
@@ -42,11 +44,13 @@ def detect_horizontal_mirror(map: NDArray) -> int:
 
     for cut_off_column in range(n_of_rows, 1, -1):
         part_of_map = map[:cut_off_column]
-        if np.array_equal(part_of_map, np.flipud(part_of_map)):
+        if (np.array_equal(part_of_map, np.flipud(part_of_map))
+                and part_of_map.shape[0] % 2 == 0):
             return cut_off_column // 2
     for cut_off_column in range(n_of_rows - 1):
         part_of_map = map[cut_off_column:]
-        if np.array_equal(part_of_map, np.flipud(part_of_map)):
+        if (np.array_equal(part_of_map, np.flipud(part_of_map))
+                and part_of_map.shape[0] % 2 == 0):
             return (n_of_rows // 2) + 1
 
     return 0
@@ -72,7 +76,8 @@ def solve_part2(input_data) -> int:
 def generate_solution(puzzle):
     solution1 = solve_part1(puzzle)
     # solution2 = solve_part2(puzzle)
-    print(f"\n\nsolution part 1 : {solution1}")
+    print(
+        f"\n\nsolution part 1 : {solution1}")  # 27460 is not it, 26645 is not it
     # print(f"\nsolution part 2 : {solution2}")
 
 
