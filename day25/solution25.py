@@ -1,20 +1,28 @@
-puzzle_input = "input25.txt"
 import networkx as nx
 
-def read_input(input_data) -> :
-    steps = []
+puzzle_input = "input25.txt"
+
+
+def create_graph_from_input(input_data) -> nx.Graph:
+    graph = nx.Graph()
     with open(input_data, "r") as file:
-
-    return steps
-
+        for line in file:
+            start, ends = line.rstrip().split(": ")
+            ends = ends.split(" ")
+            for end in ends:
+                graph.add_edge(start, end)
+    return graph
 
 
 
 
 def solve_part1(input_data) -> int:
-    G = nx.Graph()
-
-
+    graph = create_graph_from_input(input_data)
+    cut_value, partition = nx.stoer_wagner(graph)
+    if cut_value == 3:
+        return len(partition[0]) * len(partition[1])
+    else:
+        return 1  # apply additional reasoning if NOK
 
 def solve_part2(input_data) -> int:
     pass
