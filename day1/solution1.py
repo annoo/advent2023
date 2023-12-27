@@ -3,8 +3,46 @@ from collections import namedtuple
 puzzle_input = "input1.txt"
 
 
-# query from the left side: found something: remember + stop
-# query from the' right side: found something: remember + stop
+Stringified = namedtuple("StringDigit", ["name", "value"])
+DIGITS = [
+    Stringified("one", 1),
+    Stringified("two", 2),
+    Stringified("three", 3),
+    Stringified("four", 4),
+    Stringified("five", 5),
+    Stringified("six", 6),
+    Stringified("seven", 7),
+    Stringified("eight", 8),
+    Stringified("nine", 9)
+]
+
+
+def find_first_number(string: str, digits: list) -> int:
+    lowest_index = float("inf")
+    found_digit = None
+
+    digit1 = next((char for char in string if char.isdigit()), None)
+    if digit1:
+        lowest_index = string.index(digit1)
+        found_digit = int(digit1)
+
+    for digit in digits:
+        if digit.name in string:
+            index_of_str_digit1 = string.index(digit.name)
+            if index_of_str_digit1 < lowest_index:
+                lowest_index = index_of_str_digit1
+                found_digit = digit.value
+
+    return found_digit
+
+
+def find_last_number(string: str, digits: list) -> int:
+    string_reversed = string[::-1]
+    digits_reversed = [Stringified(digit.name[::-1], digit.value) for digit in digits]
+    digit2 = find_first_number(string_reversed, digits_reversed)
+    return digit2
+
+
 def solve_part1(input_data):
     numbers_to_add = []
     with open(input_data, "r") as file:
@@ -19,69 +57,20 @@ def solve_part1(input_data):
     return solution
 
 
-# find first in list/set of words, save index of first letter and the string
-# same for digit
-# compare & take the lowest index
-
-# reverse: strings in reverse
-
-
 def solve_part2(input_data):
-    Stringified = namedtuple("StringDigit", ["name", "value"])
-    DIGITS = [
-        Stringified("one", 1),
-        Stringified("two", 2),
-        Stringified("three", 3),
-        Stringified("four", 4),
-        Stringified("five", 5),
-        Stringified("six", 6),
-        Stringified("seven", 7),
-        Stringified("eight", 8),
-        Stringified("nine", 9)
-    ]
-    DigitInfo = namedtuple("DigitInfo", ["index", "value"])
     numbers_to_add = []
 
     with open(input_data, "r") as file:
         for line in file:
-            # numeral
-            front_index_numeral, front_digit_numeral = next(
-                ((i, char) for i, char in enumerate(line) if char.isdigit()),
-                (None, None),
-            )
-            # strings
-            # find the index of the first sting
-            indices = [line.find(d.name) for d in DIGITS if
-                       line.find(d.name) != -1]
-            front_index_string = min(indices) if indices else None
-
-            # we need to take the one with the smallest index
-            if front_index_string < front_index_numeral:
-                digit1 = next((d.value for d in DIGITS
-                               if line.find(d.name, front_index_string),
-                              None)
-            else:
-                digit1 = front_digit_numeral
-
-            numbers_to_add.append(int(digit1))
-
-            back_candidates = []
-            digit2 = next(
-                (
-                    (i, char)
-                    for i, char in enumerate(reversed(line))
-                    if char.isdigit()
-                ),
-                (None, None),
-            )
-            number_str = digit1 + digit2
-            numbers_to_add.append(int(number_str))
-        solution = sum(numbers_to_add)
-    return solution
+            digit1 = find_first_number(line.rstrip(), DIGITS)
+            digit2 = find_last_number(line.strip(), DIGITS)
+            number = digit1 * 10 + digit2
+            numbers_to_add.append(number)
+    return sum(numbers_to_add)
 
 
 def generate_solution(puzzle):
-    solution = solve_part1(puzzle)
+    solution = solve_part2(puzzle)
     print(f"\n\n{solution=}")
 
 

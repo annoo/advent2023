@@ -1,12 +1,12 @@
 import pytest
-from solution import solve_part1, solve_part2
+from solution1 import solve_part1, solve_part2
 
 
 @pytest.mark.parametrize(
     "part, input_data, expected_output",
     [
-        (1, "test_input_a.txt", 142),
-        (2, "test_input_b.txt", 281),
+        (1, "test_input1a.txt", 142),
+        (2, "test_input1b.txt", 281),
         # ... more test cases
     ],
 )

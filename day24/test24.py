@@ -1,7 +1,13 @@
 import pytest
-from solution24 import solve_part1, solve_part2
+from solution24 import Point, get_hailstones, solve_part1, solve_part2
 
 test_input = "test_input24.txt"
+
+
+def test_read_hailstone():
+    expected_stones = [
+    ]
+    assert get_hailstones(test_input) == expected_stones
 
 
 @pytest.mark.parametrize(
